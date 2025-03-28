@@ -1,4 +1,5 @@
 import sys
+import os
 
 def print(content):
     sys.stdout.write(content + "\n")
@@ -12,12 +13,30 @@ def parseInput(inputString):
     return command, contents
 
 
-def typeBuiltin(command):
+def findExecutableInPath(command):
+    directories = os.environ.get("PATH", "").split(os.pathsep)
+
+    for directory in directories:
+        possiblePath = os.path.join(directory, command)
+        if os.path.isfile(possiblePath) and os.access(possiblePath, os.X_OK):
+            return possiblePath
+    return None
+
+
+def typeBuiltin(commandArgs):
     builtins = {'type', 'exit', 'echo'}
-    if command in builtins:
-        print(command + " is a shell builtin")
-    else:
-        print(command + ": not found")
+
+    args = commandArgs.split()
+    for command in args:
+        if command in builtins:
+            print(command + " is a shell builtin")
+            continue
+        
+        path = findExecutableInPath(command)
+        if path:
+            print(command + " is " + path)
+        else:
+            print(command + ": not found")
 
 
 def invalidCommand(command):
@@ -28,6 +47,7 @@ def invalidCommand(command):
 def main():
     while True:
         sys.stdout.write("$ ")
+        sys.stdout.flush()
 
         command, contents = parseInput(input())
 
