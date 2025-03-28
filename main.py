@@ -5,6 +5,13 @@ def print(content):
     return 0
 
 
+def parseInput(inputString):
+    parts = inputString.split(maxsplit=1)
+    command = parts[0] if parts else ""
+    contents = parts[1] if len(parts) > 1 else ""
+    return command, contents
+
+
 def invalidCommand(command):
     print(command + ": command not found")
     return 0
@@ -14,9 +21,12 @@ def main():
     while True:
         sys.stdout.write("$ ")
 
-        command = input()
-        if command == "exit 0":
+        command, contents = parseInput(input())
+
+        if command == "exit":
             break
+        elif command == "echo":
+            print(contents)
         else:
             invalidCommand(command)
     return 0
