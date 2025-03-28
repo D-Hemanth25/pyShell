@@ -12,6 +12,14 @@ def parseInput(inputString):
     return command, contents
 
 
+def typeBuiltin(command):
+    builtins = {'type', 'exit', 'echo'}
+    if command in builtins:
+        print(command + " is a shell builtin")
+    else:
+        print(command + ": not found")
+
+
 def invalidCommand(command):
     print(command + ": command not found")
     return 0
@@ -25,6 +33,8 @@ def main():
 
         if command == "exit":
             break
+        elif command == "type":
+            typeBuiltin(contents)
         elif command == "echo":
             print(contents)
         else:
