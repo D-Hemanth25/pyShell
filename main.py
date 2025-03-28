@@ -56,6 +56,19 @@ def executeCommand(command, args):
     print(result.stdout.strip())
 
 
+def printWorkingDirectory():
+    print(os.getcwd())
+
+
+def changeDirectory(path):
+    try:
+        if path == "~":
+            path = os.path.expanduser(path)
+        os.chdir(path)
+    except FileNotFoundError:
+        print("cd: " + path + ": No such file or directory")
+    
+
 def main():
     while True:
         sys.stdout.write("$ ")
@@ -70,8 +83,9 @@ def main():
         elif command == "echo":
             print(args)
         elif command == "pwd":
-            currentWorkingDirectory = os.getcwd()
-            print(currentWorkingDirectory)
+            printWorkingDirectory()
+        elif command == "cd":
+            changeDirectory(args)
         else:
             executeCommand(command, args)
     return 0
