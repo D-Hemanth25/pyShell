@@ -31,7 +31,7 @@ def invalidCommand(command):
 
 
 def typeBuiltin(commandArgs):
-    builtins = {'type', 'exit', 'echo'}
+    builtins = {'type', 'exit', 'echo', 'pwd'}
 
     args = commandArgs.split()
     for command in args:
@@ -69,6 +69,9 @@ def main():
             typeBuiltin(args)
         elif command == "echo":
             print(args)
+        elif command == "pwd":
+            currentWorkingDirectory = os.getcwd()
+            print(currentWorkingDirectory)
         else:
             executeCommand(command, args)
     return 0
