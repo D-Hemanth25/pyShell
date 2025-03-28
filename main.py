@@ -1,5 +1,7 @@
 import sys
 import os
+import subprocess
+
 
 def print(content):
     sys.stdout.write(content + "\n")
@@ -23,6 +25,11 @@ def findExecutableInPath(command):
     return None
 
 
+def invalidCommand(command):
+    print(command + ": not found")
+    return 0
+
+
 def typeBuiltin(commandArgs):
     builtins = {'type', 'exit', 'echo'}
 
@@ -36,12 +43,17 @@ def typeBuiltin(commandArgs):
         if path:
             print(command + " is " + path)
         else:
-            print(command + ": not found")
+            invalidCommand(command)
 
 
-def invalidCommand(command):
-    print(command + ": command not found")
-    return 0
+def executeCommand(command, args):
+    path = findExecutableInPath(command)
+    if not path:
+        invalidCommand(command)
+        return 0
+    
+    result = subprocess.run([command] + args.split(), capture_output=True, text=True)
+    print(result.stdout.strip())
 
 
 def main():
@@ -49,16 +61,16 @@ def main():
         sys.stdout.write("$ ")
         sys.stdout.flush()
 
-        command, contents = parseInput(input())
+        command, args = parseInput(input())
 
         if command == "exit":
             break
         elif command == "type":
-            typeBuiltin(contents)
+            typeBuiltin(args)
         elif command == "echo":
-            print(contents)
+            print(args)
         else:
-            invalidCommand(command)
+            executeCommand(command, args)
     return 0
 
 
